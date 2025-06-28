@@ -35,8 +35,6 @@ app.use('/', generalRoutes);
 app.use('/bookings', bookingsRoutes);
 app.use('/auth', authRoutes);
 
-// Jalankan Server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// Export app untuk Vercel
+module.exports = app;
 
