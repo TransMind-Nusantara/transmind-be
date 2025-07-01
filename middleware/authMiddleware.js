@@ -1,4 +1,5 @@
 const supabase = require('../config/supabaseClient');
+const axios = require('axios');
 
 /**
  * Middleware untuk memeriksa apakah pengguna memiliki peran yang diizinkan.
@@ -35,4 +36,80 @@ const checkRole = (allowedRoles) => {
   };
 };
 
-module.exports = { checkRole }; 
+/**
+ * Middleware untuk memverifikasi Facebook access token
+ */
+const verifyFacebookToken = async (req, res, next) => {
+  const { access_token } = req.body;
+
+  if (!access_token) {
+    return res.status(400).json({ error: 'Facebook access token dibutuhkan' });
+  }
+
+  try {
+    // Verifikasi token ke Facebook Graph API
+    const response = await axios.get(`https://graph.facebook.com/me`, {
+      params: {
+        access_token: access_token,
+        fields: 'id,name,email'
+      }
+    });
+
+    // Token valid, lampirkan data Facebook ke request
+    req.facebookUser = response.data;
+    next();
+  } catch (error) {
+    console.error('Facebook token verification failed:', error.message);
+    return res.status(401).json({ error: 'Token Facebook tidak valid atau expired' });
+  }
+};
+
+/**
+ * Middleware untuk memeriksa apakah user sudah login (email atau Facebook)
+ */
+const requireAuth = async (req, res, next) => {
+  // Cek token dari header Authorization
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (!error && user) {
+        req.user = user;
+        return next();
+      }
+    } catch (error) {
+      console.error('Token verification error:', error);
+    }
+  }
+
+  // Cek Facebook token dari body
+  const { access_token } = req.body;
+  
+  if (access_token) {
+    try {
+      const response = await axios.get(`https://graph.facebook.com/me`, {
+        params: {
+          access_token: access_token,
+          fields: 'id,name,email'
+        }
+      });
+      
+      req.facebookUser = response.data;
+      return next();
+    } catch (error) {
+      console.error('Facebook token verification error:', error);
+    }
+  }
+
+  return res.status(401).json({ error: 'Akses ditolak: Autentikasi diperlukan.' });
+};
+
+module.exports = { 
+  checkRole, 
+  verifyFacebookToken, 
+  requireAuth 
+}; 
