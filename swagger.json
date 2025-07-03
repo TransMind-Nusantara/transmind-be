@@ -1,0 +1,176 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Databasetransmind",
+    "version": "1.0.0",
+    "description": "Dokumentasi API Databasetransmind"
+  },
+  "servers": [
+    { "url": "https://databasetransmind.vercel.app" },
+    { "url": "http://localhost:3000" }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register user dengan email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "role": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User berhasil dibuat" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user dengan email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login berhasil" }
+        }
+      }
+    },
+    "/auth/register-phone": {
+      "post": {
+        "summary": "Register user dengan nomor telepon (OTP)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone": { "type": "string" },
+                  "password": { "type": "string" },
+                  "name": { "type": "string" },
+                  "role": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OTP dikirim ke nomor telepon" }
+        }
+      }
+    },
+    "/auth/verify-phone-otp": {
+      "post": {
+        "summary": "Verifikasi OTP untuk nomor telepon",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone": { "type": "string" },
+                  "otp": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Registrasi berhasil" }
+        }
+      }
+    },
+    "/auth/login-phone": {
+      "post": {
+        "summary": "Login user dengan nomor telepon",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login berhasil" }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "post": {
+        "summary": "Login/register via Facebook",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "access_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login Facebook berhasil" }
+        }
+      }
+    },
+    "/bookings": {
+      "get": {
+        "summary": "Ambil semua data booking",
+        "responses": {
+          "200": { "description": "List booking" }
+        }
+      },
+      "post": {
+        "summary": "Buat booking baru",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "field1": { "type": "string" },
+                  "field2": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Booking berhasil dibuat" }
+        }
+      }
+    }
+  }
+} 

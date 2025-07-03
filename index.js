@@ -7,6 +7,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Swagger setup
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,
