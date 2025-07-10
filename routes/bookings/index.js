@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bookingController = require('../../controllers/bookingController');
+const bookingController = require('../../controllers/booking/bookingController');
 const { checkRole } = require('../../middleware/authMiddleware');
 
 // Definisikan rute dan tautkan ke controller

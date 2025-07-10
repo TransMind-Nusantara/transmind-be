@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const generalController = require('../../controllers/generalController');
+const generalController = require('../../controllers/general/generalController');
 
 // Import fetch, pastikan Anda telah menginstal node-fetch
 // npm install node-fetch@2

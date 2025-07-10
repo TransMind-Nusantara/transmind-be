@@ -31,14 +31,16 @@ app.use(cors({
 app.use(express.json());
 
 // Import Rute
-const bookingsRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
+const bookingsRoutes = require('./routes/bookings');
 const generalRoutes = require('./routes/general');
+const adminRoutes = require("./routes/admin/index")
 
 // Gunakan Rute
 app.use('/', generalRoutes);
 app.use('/bookings', bookingsRoutes);
 app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
 
 // Jalankan server jika tidak di Vercel (untuk development)
 if (process.env.NODE_ENV !== 'production') {
