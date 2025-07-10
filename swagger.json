@@ -33,7 +33,7 @@
         }
       }
     },
-    "/auth/login": {
+    "/auth/sign-in": {
       "post": {
         "summary": "Login user dengan email",
         "requestBody": {
@@ -55,7 +55,7 @@
         }
       }
     },
-    "/auth/register-phone": {
+    "/auth/phone-sign-in": {
       "post": {
         "summary": "Register user dengan nomor telepon (OTP)",
         "requestBody": {
