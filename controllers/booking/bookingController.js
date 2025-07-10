@@ -1,8 +1,5 @@
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
-// ==============================
-// Get all bookings
-// ==============================
 const getAllBookings = async (req, res) => {
   const { data, error } = await supabase
     .from('bookings')
@@ -12,9 +9,6 @@ const getAllBookings = async (req, res) => {
   res.json(data);
 };
 
-// ==============================
-// Create a new booking
-// ==============================
 const createBooking = async (req, res) => {
   const booking = {
     user_id: req.body.user_id,
@@ -38,9 +32,6 @@ const createBooking = async (req, res) => {
   res.status(201).json(data);
 };
 
-// ==============================
-// Update a booking
-// ==============================
 const updateBooking = async (req, res) => {
   const { id } = req.params;
 
