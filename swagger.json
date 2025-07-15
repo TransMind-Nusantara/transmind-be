@@ -79,6 +79,28 @@
         }
       }
     },
+    "/verify-otp": {
+      "post": {
+        "summary": "Verifikasi OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "otp": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email terverifikasi!" }
+        }
+      }
+    },
     "/auth/verify-phone-otp": {
       "post": {
         "summary": "Verifikasi OTP untuk nomor telepon",

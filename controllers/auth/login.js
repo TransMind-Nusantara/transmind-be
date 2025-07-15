@@ -2,6 +2,7 @@ const supabase = require('../../config/supabaseClient');
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 
+<<<<<<< HEAD
 const phoneUsers = new Map();
 
 /**
@@ -14,6 +15,8 @@ async function checkPasswordHash(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
+=======
+>>>>>>> a641aeac5c2e446b11e988e9f53dc95239ce67b9
 const loginWithPhone = async (req, res) => {
   const { phone, password } = req.body;
 
@@ -22,7 +25,6 @@ const loginWithPhone = async (req, res) => {
   }
 
   try {
-    // Normalize phone number
     let normalizedPhone = phone;
     if (phone.startsWith('0')) {
       normalizedPhone = '+62' + phone.substring(1);
@@ -30,28 +32,31 @@ const loginWithPhone = async (req, res) => {
       normalizedPhone = '+' + phone;
     }
 
-    // Find user in memory storage
-    const user = phoneUsers.get(normalizedPhone);
+    const { data: userData, error } = await supabase.from("users").select("*").eq("phone", normalizedPhone).single()
 
-    if (!user) {
-      return res.status(401).json({ error: 'Nomor telepon tidak terdaftar' });
+    if (error || !userData) {
+      return res.status(401).json({ error: "Nomor telepon tidak terdaftar" })
     }
 
+<<<<<<< HEAD
     // Compare hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+=======
+    // Check password (plain)
+    // Decode
+    if (user.password !== password) {
+>>>>>>> a641aeac5c2e446b11e988e9f53dc95239ce67b9
       return res.status(401).json({ error: 'Password salah' });
     }
-
-    console.log('Phone login successful for:', normalizedPhone);
 
     res.json({
       message: 'Login berhasil',
       user: {
-        id: user.id,
-        phone: user.phone,
-        name: user.name,
-        role: user.role
+        id: userData.id,
+        phone: userData.phone,
+        name: userData.name,
+        role: userData.role || 'user'
       },
       auth_type: 'phone'
     });
@@ -61,8 +66,6 @@ const loginWithPhone = async (req, res) => {
     res.status(500).json({ error: 'Gagal login: ' + error.message });
   }
 };
-
-
 
 const facebookLogin = async (req, res) => {
   const { access_token } = req.body;
@@ -75,7 +78,7 @@ const facebookLogin = async (req, res) => {
 
   try {
     console.log('Verifying Facebook token...');
-    
+
     // 1. Verifikasi token ke Facebook Graph API
     const fbResponse = await axios.get(`https://graph.facebook.com/me`, {
       params: {
@@ -85,7 +88,7 @@ const facebookLogin = async (req, res) => {
     });
 
     console.log('Facebook API response received');
-    
+
     const { id: facebook_id, name, email, picture, gender, birthday } = fbResponse.data;
 
     // 2. Cek apakah user sudah ada di database berdasarkan facebook_id
@@ -99,7 +102,7 @@ const facebookLogin = async (req, res) => {
 
     if (existingUser) {
       console.log('Existing Facebook user found, updating data...');
-      
+
       // User sudah ada, update data terbaru
       const { data: updatedUser, error: updateError } = await supabase
         .from('users')
@@ -123,7 +126,7 @@ const facebookLogin = async (req, res) => {
       user = updatedUser;
     } else {
       console.log('New Facebook user, creating account...');
-      
+
       // User baru, buat record baru
       const { data: newUser, error: createError } = await supabase
         .from('users')
@@ -173,18 +176,18 @@ const facebookLogin = async (req, res) => {
       status: error.response?.status,
       data: error.response?.data
     });
-    
+
     if (error.response?.status === 401) {
       return res.status(401).json({ error: 'Token Facebook tidak valid atau expired' });
     }
-    
+
     if (error.response?.status === 400) {
-      return res.status(400).json({ 
-        error: 'Request Facebook gagal', 
-        detail: error.response.data 
+      return res.status(400).json({
+        error: 'Request Facebook gagal',
+        detail: error.response.data
       });
     }
-    
+
     return res.status(500).json({ error: 'Gagal login dengan Facebook: ' + error.message });
   }
 };
@@ -207,13 +210,13 @@ const login = async (req, res) => {
 
   const role = data.user.user_metadata.role || 'user';
 
-  res.json({ 
-    message: 'Login berhasil', 
+  res.json({
+    message: 'Login berhasil',
     role: role,
-    session: data.session 
+    session: data.session
   });
 };
 
 module.exports = {
-    loginWithPhone, facebookLogin, login
+  loginWithPhone, facebookLogin, login
 }

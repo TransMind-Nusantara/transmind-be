@@ -1,21 +1,8 @@
 const supabase = require('../../config/supabaseClient');
+const { parseISO, isAfter } = require('date-fns');
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-const sendOTPEmail = async (email, otp) => {
-    try {
-        console.log(`📧 OTP for ${email}: ${otp}`);
-        console.log(`📧 Email content: Kode OTP Anda adalah ${otp}. Kode ini berlaku selama 10 menit.`);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        return { success: true };
-    } catch (error) {
-        console.error('Error sending OTP email:', error);
-        return { success: false, error: error.message };
-    }
 };
 
 const sendOTPSMS = async (phone, otp) => {
@@ -39,32 +26,42 @@ const verifyOTP = async (req, res) => {
     }
 
     try {
-        // Get stored OTP data
-        const storedData = otpStore.get(email);
+        const { data: otpData, error: otpError } = await supabase
+            .from("otp_codes")
+            .select("*")
+            .eq("email", email)
+            .eq("otp", otp)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
 
-        if (!storedData) {
-            return res.status(400).json({ error: 'OTP tidak ditemukan atau sudah expired' });
+        if (otpError || !otpData) {
+            console.log(otpError);
+
+            return res.status(400).json({ error: "OTP tidak valid" })
         }
 
         // Check if OTP is expired
-        if (Date.now() > storedData.expiresAt) {
-            otpStore.delete(email);
+        console.log(otpData.expires_at);
+
+        const now = new Date();
+        const expiresAt = parseISO(otpData.expires_at);
+
+        if (isAfter(now, expiresAt)) {
+            await supabase.from('otp_codes').delete().eq('id', otpData.id);
             return res.status(400).json({ error: 'OTP sudah expired. Silakan request OTP baru.' });
         }
 
-        // Verify OTP
-        if (storedData.otp !== otp) {
-            return res.status(400).json({ error: 'Kode OTP tidak valid' });
-        }
+        const { name, password, role } = otpData.data;
 
         // Create user in Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email,
-            password: storedData.password,
+            password: password,
             options: {
                 data: {
-                    role: storedData.role,
-                    name: storedData.name
+                    role: role,
+                    name: name
                 }
             }
         });
@@ -74,34 +71,34 @@ const verifyOTP = async (req, res) => {
         }
 
         // Create user profile in database
-        const { data: profileData, error: profileError } = await supabase
+        const { error: profileError } = await supabase
             .from('users')
             .insert({
                 id: authData.user.id,
-                email: email,
-                name: storedData.name,
-                role: storedData.role,
+                user_email: email,
+                name,
+                role,
+                password,
                 email_verified: true,
                 created_at: new Date()
             })
             .select()
             .single();
 
-        if (profileError) {
-            console.error('Profile creation error:', profileError);
-            // User auth created but profile failed - this should be handled
-        }
+        await supabase.from('otp_codes').delete().eq('id', otpData.id);
 
-        // Clean up OTP data
-        otpStore.delete(email);
+        if (profileError) {
+            console.log(profileError);
+            return res.status(400).json({ error: "Failed create profile" })
+        }
 
         res.status(201).json({
             message: 'Registrasi berhasil! Akun Anda telah dibuat.',
             user: {
                 id: authData.user.id,
-                email: email,
-                name: storedData.name,
-                role: storedData.role
+                email,
+                name,
+                role
             }
         });
 

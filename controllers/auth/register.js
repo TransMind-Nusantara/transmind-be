@@ -1,8 +1,15 @@
 const supabase = require('../../config/supabaseClient');
+const bcrypt = require("bcrypt")
+const { addMinutes } = require('date-fns');
 
-// Store OTP codes temporarily (in production, use Redis or database)
-const otpStore = new Map();
+const { sendOTPEmail } = require("../../helpers/mailerSend")
+
 const phoneOtpStore = new Map();
+const saltRounds = 10
+
+const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
 const register = async (req, res) => {
     const { email, password, role, name } = req.body;
@@ -23,29 +30,35 @@ const register = async (req, res) => {
             return res.status(400).json({ error: 'Email sudah terdaftar' });
         }
 
-        // Generate OTP
+        const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+        // Generate OTP and Expires Date
         const otp = generateOTP();
+        const expiresAt = addMinutes(new Date(), 10);
 
-        // Store OTP with expiration (10 minutes)
-        const expirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes
-        otpStore.set(email, {
-            otp: otp,
-            password: password,
-            role: role || 'user',
-            name: name,
-            expiresAt: expirationTime
-        });
+        const { error: otpError } = await supabase.from('otp_codes').insert([{
+            email,
+            otp,
+            expires_at: expiresAt,
+            data: {
+                name,
+                role: role || 'user',
+                password: hashedPassword,
+            }
+        }]);
 
-        // Send OTP via email
-        const emailResult = await sendOTPEmail(email, otp);
+        if (otpError) {
+            console.log(otpError)
+            return res.status(500).json({ error: 'Gagal menyimpan OTP' });
+        }
 
-        if (!emailResult.success) {
-            return res.status(500).json({ error: 'Gagal mengirim OTP: ' + emailResult.error });
+        const sendResult = await sendOTPEmail(email, otp);
+        if (!sendResult.success) {
+            return res.status(500).json({ error: 'Gagal mengirim OTP: ' + sendResult.error });
         }
 
         res.status(200).json({
-            message: 'OTP telah dikirim ke email Anda. Silakan cek email dan masukkan kode OTP.',
-            email: email
+            message: 'OTP telah dikirim ke email Anda. Silakan verifikasi untuk menyelesaikan pendaftaran.',
         });
 
     } catch (error) {
