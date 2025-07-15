@@ -78,6 +78,7 @@ const verifyOTP = async (req, res) => {
                 user_email: email,
                 name,
                 role,
+                password,
                 email_verified: true,
                 created_at: new Date()
             })
