@@ -79,7 +79,7 @@
         }
       }
     },
-    "/verify-otp": {
+    "/auth/verify-otp": {
       "post": {
         "summary": "Verifikasi OTP",
         "requestBody": {
