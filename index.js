@@ -29,12 +29,12 @@ app.use(cors({
 app.use(express.json());
 
 const authRoutes = require('./routes/auth');
-const bookingsRoutes = require('./routes/bookings');
+const planeRoutes = require('./routes/plane');
 const generalRoutes = require('./routes/general');
 const adminRoutes = require("./routes/admin/index")
 
 app.use('/', generalRoutes);
-app.use('/bookings', bookingsRoutes);
+app.use('/api/plane', planeRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 

@@ -14,13 +14,13 @@ const sendOTPEmail = async (toEmail, otpCode) => {
     try {
         await transporter.sendMail({
             from: `"TransMind" <${process.env.MAILERSEND_SMTP_USER}>`,
-            to: "luckyfauzi2004@gmail.com",
+            to: toEmail,
             subject: 'Kode OTP Verifikasi TransMind Anda',
             text: `Kode OTP Anda adalah ${otpCode}. Berlaku selama 10 menit.`,
             html: `<p>Kode OTP Anda adalah <strong>${otpCode}</strong>.<br/>Berlaku selama <strong>10 menit</strong>.</p>`
         });
 
-        console.log('✅ OTP dikirim ke:', "luckyfauzi2004@gmail.com");
+        console.log('✅ OTP dikirim ke:', toEmail);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };
