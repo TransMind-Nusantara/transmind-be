@@ -20,6 +20,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "name": { "type": "string" },
                   "email": { "type": "string" },
                   "password": { "type": "string" },
                   "role": { "type": "string" }
@@ -79,7 +80,7 @@
         }
       }
     },
-    "/verify-otp": {
+    "/auth/verify-otp": {
       "post": {
         "summary": "Verifikasi OTP",
         "requestBody": {
