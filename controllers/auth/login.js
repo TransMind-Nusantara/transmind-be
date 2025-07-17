@@ -2,9 +2,6 @@ const supabase = require('../../config/supabaseClient');
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 
-<<<<<<< HEAD
-const phoneUsers = new Map();
-
 /**
  * Fungsi untuk cek apakah password plain cocok dengan hash password
  * @param {string} plainPassword - Password yang diinput user
@@ -15,8 +12,6 @@ async function checkPasswordHash(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
-=======
->>>>>>> a641aeac5c2e446b11e988e9f53dc95239ce67b9
 const loginWithPhone = async (req, res) => {
   const { phone, password } = req.body;
 
@@ -38,15 +33,9 @@ const loginWithPhone = async (req, res) => {
       return res.status(401).json({ error: "Nomor telepon tidak terdaftar" })
     }
 
-<<<<<<< HEAD
     // Compare hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = checkPasswordHash(password, user.password);
     if (!isPasswordValid) {
-=======
-    // Check password (plain)
-    // Decode
-    if (user.password !== password) {
->>>>>>> a641aeac5c2e446b11e988e9f53dc95239ce67b9
       return res.status(401).json({ error: 'Password salah' });
     }
 
