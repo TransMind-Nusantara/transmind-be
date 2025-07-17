@@ -34,7 +34,7 @@ const loginWithPhone = async (req, res) => {
     }
 
     // Compare hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = checkPasswordHash(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Password salah' });
     }
