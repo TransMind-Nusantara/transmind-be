@@ -32,11 +32,13 @@ const authRoutes = require('./routes/auth');
 const planeRoutes = require('./routes/plane');
 const generalRoutes = require('./routes/general');
 const adminRoutes = require("./routes/admin/index")
+const userRoutes = require("./routes/user/profiles")
 
 app.use('/', generalRoutes);
 app.use('/api/plane', planeRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/user', userRoutes);
 
 if (process.env.NODE_ENV !== 'production') {
 app.listen(port, () => {
