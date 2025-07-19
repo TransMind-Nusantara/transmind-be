@@ -1,5 +1,14 @@
 {
   "openapi": "3.0.0",
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "info": {
     "title": "API Databasetransmind",
     "version": "1.0.0",
@@ -9,9 +18,24 @@
     { "url": "https://databasetransmind.vercel.app" },
     { "url": "http://localhost:3000" }
   ],
+  "tags": [
+    {
+      "name": "Authentications",
+      "description": "Endpoints for all authentication type"
+    },
+    {
+      "name": "User",
+      "description": "Endpoints for User already have authorization"
+    },
+    {
+      "name": "Flights",
+      "description": "Endpoints for all Flights"
+    }
+  ],
   "paths": {
     "/auth/register": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Register user dengan email",
         "requestBody": {
           "required": true,
@@ -36,6 +60,7 @@
     },
     "/auth/sign-in": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Login user dengan email",
         "requestBody": {
           "required": true,
@@ -58,6 +83,7 @@
     },
     "/auth/phone-sign-in": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Register user dengan nomor telepon (OTP)",
         "requestBody": {
           "required": true,
@@ -82,6 +108,7 @@
     },
     "/auth/verify-otp": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Verifikasi OTP",
         "requestBody": {
           "required": true,
@@ -104,6 +131,7 @@
     },
     "/auth/verify-phone-otp": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Verifikasi OTP untuk nomor telepon",
         "requestBody": {
           "required": true,
@@ -126,6 +154,7 @@
     },
     "/auth/login-phone": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Login user dengan nomor telepon",
         "requestBody": {
           "required": true,
@@ -148,6 +177,7 @@
     },
     "/auth/facebook": {
       "post": {
+        "tags": ["Authentications"],
         "summary": "Login/register via Facebook",
         "requestBody": {
           "required": true,
@@ -164,6 +194,141 @@
         },
         "responses": {
           "200": { "description": "Login Facebook berhasil" }
+        }
+      }
+    },
+    "/user/profile/upload-avatar": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Mengupload atau mengganti avatar pengguna",
+        "description": "Endpoint ini digunakan untuk mengupload file gambar sebagai avatar. Pengguna harus login terlebih dahulu (mengirimkan Bearer Token). File lama akan otomatis diganti jika sudah ada.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatars": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "File gambar yang akan diupload."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Upload berhasil" },
+                    "url": { "type": "string", "example": "https://<project-ref>.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Tidak ada file yang diupload." },
+          "401": { "description": "Akses ditolak. Token tidak valid atau tidak ada." },
+          "500": { "description": "Terjadi kegagalan di server." }
+        }
+      }
+    },
+    "/user/get-me": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user authorized",
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found!"
+          },
+          "400": {
+            "description": "Token is required"
+          }
+        }
+      }
+    },
+    "/api/plane/search-flight": {
+      "get": {
+        "tags": ["Flights"],
+        "summary": "Mencari jadwal penerbangan",
+        "description": "Mengambil daftar penerbangan berdasarkan rute, tanggal, dan kriteria lainnya.",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Kode bandara asal (IATA Code)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "CGK"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Kode bandara tujuan (IATA Code)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "SIN"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Tanggal keberangkatan (format: MM-DD-YYYY)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "08-26-2025"
+            }
+          },
+          {
+            "name": "seat_class",
+            "in": "query",
+            "description": "Kelas kursi yang diinginkan (Economy, Business, First)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Business"
+            }
+          },
+          {
+            "name": "passenger_count",
+            "in": "query",
+            "description": "Jumlah penumpang",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pencarian berhasil dan mengembalikan daftar penerbangan."
+          },
+          "400": {
+            "description": "Parameter pencarian tidak valid."
+          }
         }
       }
     },

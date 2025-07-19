@@ -182,28 +182,26 @@ const facebookLogin = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email dan password dibutuhkan' });
-  }
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email dan password dibutuhkan' });
+    }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
 
-  if (error) {
-    return res.status(401).json({ error: 'Login gagal: ' + error.message });
-  }
+    if (error) {
+        return res.status(401).json({ message: 'Login gagal: Email atau password salah.' + error });
+    }
 
-  const role = data.user.user_metadata.role || 'user';
-
-  res.json({
-    message: 'Login berhasil',
-    role: role,
-    session: data.session
-  });
+    res.status(200).json({
+        message: 'Login berhasil',
+        user: data.user,
+        session: data.session
+    });
 };
 
 module.exports = {
