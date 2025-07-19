@@ -1,55 +1,63 @@
-const supabase = require('../../config/supabaseClient');
+const supabase = require("../../config/supabaseClient");
 
 const getOneProfile = async (req, res) => {
-    const { id } = req.params
+  const { id } = req.user;
+  console.log(id)
 
-    const { data: profileUser, error } = await supabase
-        .from('users')
-        .select("*")
-        .eq("id", id)
-        .single()
+  const { data: profileUser, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
 
-    if (error) return res.status(500).json({ message: error.message })
+  if (error) return res.status(500).json({ message: error.message });
 
-    res.status(200).json(profileUser)
-}
+  res.status(200).json(profileUser);
+};
 
 const uploadAvatar = async (req, res) => {
-    const { id } = req.params
-    const file = req.file
+  const { id } = req.user;
+  const file = req.file;
 
-    if (!file) return res.status(400).json({ message: "No file uploaded!" })
+  if (!file) return res.status(400).json({ message: "No file uploaded!" });
 
-    const filePath = `avatars/${id}-${Date.now()}-${file.originalname}`
+  const fileExtention = file.originalname.split(".").pop();
+  const filePath = `${id}/avatar.${fileExtention}`;
 
-    const { data, error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file.buffer, {
-            contentType: file.mimetype
-        })
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: true, // for replacing the same path
+    });
 
-    if (uploadError) return res.status(500).json({ message: uploadError.message })
+  if (uploadError)
+    return res
+      .status(500)
+      .json({ message: "Upload gagal!", detail: uploadError.message });
 
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-        .from("avatars")
-        .createSignedUrl(filePath, 60 * 60) // 1 hour
+  const {
+    data: { publicUrl },
+  } = await supabase.storage.from("avatars").getPublicUrl(filePath);
 
-    if (signedUrlError) return res.status(500).json({ message: signedUrlError.message })
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ avatar_url: publicUrl })
+    .eq("id", id);
 
-    const { error: updateError } = await supabase
-        .from("users")
-        .update({ avatar_url: filePath })
-        .eq("id", id)
+  if (updateError) {
+    await supabase.storage.from("avatars").remove([filePath]);
+    res.status(500).json({ message: updateError.message });
+  }
 
-    if (updateError) return res.status(500).json({ message: updateError.message })
+  console.log("user id " + id);
+  console.log("public URL " + publicUrl);
+  
 
-        console.log("singed url:", signedUrlData)
-
-    // res.status(200).json({ message: "Upload Success!", url: signedUrlData.signedUrl })
-
-}
+  res.status(200).json({ message: "Upload berhasil", url: publicUrl });
+};
 
 module.exports = {
-    getOneProfile,
-    uploadAvatar
-}
+  getOneProfile,
+  uploadAvatar,
+};
