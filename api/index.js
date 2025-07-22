@@ -7,9 +7,9 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get('/swagger.json', (req, res) => {
-  res.sendFile(path.resolve(process.cwd(), 'swagger.json')); 
-});
+// app.get('/swagger.json', (req, res) => {
+//   res.sendFile(path.resolve(process.cwd(), 'swagger.json'));
+// });
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
@@ -27,7 +27,15 @@ app.use(session({
 
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000',
+  origin: function (origin, callback) {
+    const allowedOrigins = ['http://localhost:3000'];
+
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
 }));
 
 app.use(express.json());
@@ -44,11 +52,9 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 
-if (process.env.NODE_ENV !== 'production') {
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
-}
 
 // Export app untuk Vercel
 module.exports = app;
