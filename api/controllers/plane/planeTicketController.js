@@ -9,10 +9,6 @@ const getAllBookings = async (req, res) => {
   res.json(data);
 };
 
-const createTicketPlane = async (req, res) => {
-
-};
-
 const searchPlaneTicket = async (req, res) => {
   const { from, to, date, seat_class, passenger_count } = req.query;
 
@@ -58,6 +54,5 @@ const updateBooking = async (req, res) => {
 module.exports = {
   searchPlaneTicket,
   getAllBookings,
-  createTicketPlane,
   updateBooking,
 }; 
