@@ -25,17 +25,24 @@ app.use(session({
   },
 }));
 
-app.use(cors({
-  credentials: true,
-  origin: function (origin, callback) {
-    const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://transmind-be-production.up.railway.app'
+];
 
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+if (process.env.CORS_ORIGIN) {
+    allowedOrigins.push(process.env.CORS_ORIGIN);
+}
+
+app.use(cors({
+    credentials: true,
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
     }
-  }
 }));
 
 app.use(express.json());
