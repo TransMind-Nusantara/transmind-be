@@ -15,9 +15,15 @@
     "description": "Dokumentasi API Databasetransmind"
   },
   "servers": [
-    { "url": "https://databasetransmind.vercel.app" },
-    { "url": "https://transmind-be-production.up.railway.app" },
-    { "url": "http://localhost:3000" }
+    {
+      "url": "https://databasetransmind.vercel.app"
+    },
+    {
+      "url": "https://transmind-be-production.up.railway.app"
+    },
+    {
+      "url": "http://localhost:3000"
+    }
   ],
   "tags": [
     {
@@ -29,6 +35,10 @@
       "description": "Endpoints for User already have authorization"
     },
     {
+      "name": "General",
+      "description": "Endpoint untuk membuat pemesanan tiket"
+    },
+    {
       "name": "Flights",
       "description": "Endpoints for all Flights"
     }
@@ -36,7 +46,9 @@
   "paths": {
     "/auth/register": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Register user dengan email",
         "requestBody": {
           "required": true,
@@ -45,23 +57,35 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string" },
-                  "email": { "type": "string" },
-                  "password": { "type": "string" },
-                  "role": { "type": "string" }
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "User berhasil dibuat" }
+          "201": {
+            "description": "User berhasil dibuat"
+          }
         }
       }
     },
     "/auth/sign-in": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Login user dengan email",
         "requestBody": {
           "required": true,
@@ -70,21 +94,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": { "type": "string" },
-                  "password": { "type": "string" }
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Login berhasil" }
+          "200": {
+            "description": "Login berhasil"
+          }
         }
       }
     },
     "/auth/phone-sign-in": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Register user dengan nomor telepon (OTP)",
         "requestBody": {
           "required": true,
@@ -93,23 +125,35 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "phone": { "type": "string" },
-                  "password": { "type": "string" },
-                  "name": { "type": "string" },
-                  "role": { "type": "string" }
+                  "phone": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "OTP dikirim ke nomor telepon" }
+          "200": {
+            "description": "OTP dikirim ke nomor telepon"
+          }
         }
       }
     },
     "/auth/verify-otp": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Verifikasi OTP",
         "requestBody": {
           "required": true,
@@ -118,21 +162,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": { "type": "string" },
-                  "otp": { "type": "string" }
+                  "email": {
+                    "type": "string"
+                  },
+                  "otp": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Email terverifikasi!" }
+          "200": {
+            "description": "Email terverifikasi!"
+          }
         }
       }
     },
     "/auth/verify-phone-otp": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Verifikasi OTP untuk nomor telepon",
         "requestBody": {
           "required": true,
@@ -141,21 +193,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "phone": { "type": "string" },
-                  "otp": { "type": "string" }
+                  "phone": {
+                    "type": "string"
+                  },
+                  "otp": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Registrasi berhasil" }
+          "201": {
+            "description": "Registrasi berhasil"
+          }
         }
       }
     },
     "/auth/login-phone": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Login user dengan nomor telepon",
         "requestBody": {
           "required": true,
@@ -164,21 +224,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "phone": { "type": "string" },
-                  "password": { "type": "string" }
+                  "phone": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Login berhasil" }
+          "200": {
+            "description": "Login berhasil"
+          }
         }
       }
     },
     "/auth/facebook": {
       "post": {
-        "tags": ["Authentications"],
+        "tags": [
+          "Authentications"
+        ],
         "summary": "Login/register via Facebook",
         "requestBody": {
           "required": true,
@@ -187,20 +255,26 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "access_token": { "type": "string" }
+                  "access_token": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Login Facebook berhasil" }
+          "200": {
+            "description": "Login Facebook berhasil"
+          }
         }
       }
     },
     "/user/profile/upload-avatar": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Mengupload atau mengganti avatar pengguna",
         "description": "Endpoint ini digunakan untuk mengupload file gambar sebagai avatar. Pengguna harus login terlebih dahulu (mengirimkan Bearer Token). File lama akan otomatis diganti jika sudah ada.",
         "security": [
@@ -233,26 +307,40 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": { "type": "string", "example": "Upload berhasil" },
-                    "url": { "type": "string", "example": "https://<project-ref>.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png" }
+                    "message": {
+                      "type": "string",
+                      "example": "Upload berhasil"
+                    },
+                    "url": {
+                      "type": "string",
+                      "example": "https://<project-ref>.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png"
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Tidak ada file yang diupload." },
-          "401": { "description": "Akses ditolak. Token tidak valid atau tidak ada." },
-          "500": { "description": "Terjadi kegagalan di server." }
+          "400": {
+            "description": "Tidak ada file yang diupload."
+          },
+          "401": {
+            "description": "Akses ditolak. Token tidak valid atau tidak ada."
+          },
+          "500": {
+            "description": "Terjadi kegagalan di server."
+          }
         }
       }
     },
     "/user/get-me": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Get user authorized",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -265,9 +353,140 @@
         }
       }
     },
+    "/create-multiple-ticket": {
+      "post": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Membuat booking baru (One Way, Round Trip, Multi-city)",
+        "description": "Membuat satu transaksi booking yang bisa berisi satu atau lebih perjalanan. Endpoint ini memerlukan otentikasi.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "journeys": {
+                    "type": "array",
+                    "description": "Array dari setiap perjalanan yang dipesan.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ticket_id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID dari jadwal penerbangan/kereta."
+                        },
+                        "passengers": {
+                          "type": "array",
+                          "description": "Array dari setiap penumpang untuk perjalanan ini.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "seat_id": {
+                                "type": "integer",
+                                "description": "ID dari kursi yang dipilih."
+                              },
+                              "full_name": {
+                                "type": "string",
+                                "description": "Nama lengkap sesuai KTP/Paspor."
+                              },
+                              "id_type": {
+                                "type": "string",
+                                "enum": [
+                                  "KTP",
+                                  "PASSPORT",
+                                  "SIM"
+                                ]
+                              },
+                              "id_number": {
+                                "type": "string",
+                                "description": "Nomor identitas."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "One Way": {
+                  "summary": "Contoh inputan One Way",
+                  "value": {
+                    "journeys": [
+                      {
+                        "ticket_id": "UUID",
+                        "passengers": [
+                          {
+                            "seat_id": 45,
+                            "full_name": "Budi Santoso",
+                            "id_type": "PASSPORT",
+                            "id_number": "A1234567"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "Round Trip": {
+                  "summary": "Contoh inputan Round Trip dan Multiple",
+                  "value": {
+                    "journeys": [
+                      {
+                        "ticket_id": "06b7d304-d30d-46d9-b5d4-7514659d96b5",
+                        "passengers": [
+                          {
+                            "seat_id": 20,
+                            "full_name": "Andi Wijaya",
+                            "id_type": "PASSPORT",
+                            "id_number": "C112233"
+                          }
+                        ]
+                      },
+                      {
+                        "ticket_id": "UUID",
+                        "passengers": [
+                          {
+                            "seat_id": 92,
+                            "full_name": "Andi Wijaya",
+                            "id_type": "PASSPORT",
+                            "id_number": "C112233"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Booking berhasil dibuat."
+          },
+          "400": {
+            "description": "Input tidak valid."
+          },
+          "401": {
+            "description": "Otentikasi gagal."
+          }
+        }
+      }
+    },
     "/api/plane/search-flight": {
       "get": {
-        "tags": ["Flights"],
+        "tags": [
+          "Flights"
+        ],
         "summary": "Mencari jadwal penerbangan",
         "description": "Mengambil daftar penerbangan berdasarkan rute, tanggal, dan kriteria lainnya.",
         "parameters": [
@@ -337,7 +556,9 @@
       "get": {
         "summary": "Ambil semua data booking",
         "responses": {
-          "200": { "description": "List booking" }
+          "200": {
+            "description": "List booking"
+          }
         }
       },
       "post": {
@@ -349,17 +570,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "field1": { "type": "string" },
-                  "field2": { "type": "string" }
+                  "field1": {
+                    "type": "string"
+                  },
+                  "field2": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Booking berhasil dibuat" }
+          "201": {
+            "description": "Booking berhasil dibuat"
+          }
         }
       }
     }
   }
-} 
+}
