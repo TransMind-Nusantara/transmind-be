@@ -1,5 +1,6 @@
 // Menggunakan node-fetch@2 yang kompatibel dengan CommonJS
 const fetch = require('node-fetch');
+const supabase = require('../../config/supabaseClient');
 
 // ==============================
 // Main Route
@@ -81,9 +82,32 @@ const getFlights = async (req, res) => {
     }
 };
 
+const createMultiTicket = async (req, res) => {
+    const { id: userId } = req.user;
+    const { journeys } = req.body;
+
+    if (!journeys || !Array.isArray(journeys) || journeys.length === 0) {
+        return res.status(400).json({ message: "Journey harus di isi dan berupa Array!" })
+    }
+
+    try {
+        const { data, error } = await supabase.rpc("create_multiple_booking", {
+            p_user_id: userId,
+            p_journeys: journeys
+        })
+
+        if (error) throw error;
+
+        res.status(201).json({ message: "Booking berhasil dibuat!", created_data: data })
+    } catch (error) {
+        res.status(500).json({ message: "Error",  details: error})
+    }
+};
+
 module.exports = {
     getMain,
     getHello,
     updateUsername,
     getFlights,
+    createMultiTicket
 }; 

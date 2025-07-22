@@ -16,6 +16,7 @@
   },
   "servers": [
     { "url": "https://databasetransmind.vercel.app" },
+    { "url": "https://trial-transmind-api.vercel.app" },
     { "url": "http://localhost:3000" }
   ],
   "tags": [
