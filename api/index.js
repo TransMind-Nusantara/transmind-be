@@ -11,6 +11,10 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.get('/swagger.json', (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), 'swagger.json'));
+});
+
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,
