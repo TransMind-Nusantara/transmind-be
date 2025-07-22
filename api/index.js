@@ -7,13 +7,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.get('/swagger.json', (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), 'swagger.json')); 
+});
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get('/swagger.json', (req, res) => {
-  res.sendFile(path.join(__dirname, '../swagger.json')); 
-});
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,
